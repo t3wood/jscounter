@@ -1,0 +1,185 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+
+	<style>
+		body {
+			font-family: Arial, Helvetica, sans-serif;
+			font-size: 11px;
+			
+		}
+		.counterContainer {
+			padding:0;
+			margin:0;
+			width:715px;
+			height:300px;
+			border-radius:4px;
+			text-align:center;
+			display:table-cell;
+			vertical-align:middle;
+			background-color: #000000;
+			background: linear-gradient(top, #000000, #404040);
+			background: -webkit-linear-gradient(top, #000000, #404040);
+		}
+		#counter { white-space:nowrap; text-align:center; position:relative; color:#000; margin:0;padding:0; display:block;}
+		.group {
+			display: inline-block;
+			padding: 0;
+			margin: 0;
+			margin-right: 15px;
+		}
+		.counter {
+			background-image: url(jcountdown_slide_black.png);
+			position: relative;
+			margin: 0;
+			display: inline-block;
+			background-position: -111px 0;
+			padding: 1px 0 1px 0;
+			margin-right: 0;
+			height: 64px;
+			width: 50px;
+		}
+			.counter:first-child {
+				padding: 1px 0 1px 1px;
+				background-position: -60px 0;
+			}
+
+			.counter.last {
+				padding: 1px 1px 1px 0;
+				background-position: -161px 0;
+			}
+		.group > .counter > .cover {
+			position: absolute;
+			z-index: 1;
+			padding: 0;
+			margin: 0;
+		}
+
+		.group > .counter > .cover {
+			width: 50px;
+			height: 64px;
+			top: 1px;
+			left: 0px;
+			background-position: -110px -70px;
+		}
+			.group > .counter:first-child > .cover  {
+				background-position:-60px -70px;
+				left:1px;
+			}
+		
+		
+		.group>.counter>.text { width:50px;height:64px; margin:0;padding:0;}
+		.group > .counter > .cover {
+			background-image: url(jcountdown_slide_black.png);
+		}
+		.text {
+			background-image: url(jcountdown_slide_black.png);
+		}
+	</style>
+	<div class="counterContainer">
+		<div id="counter">
+			<div class="group">
+				<div class="counter first" id="thousands">
+					<div class="cover"></div>
+					<div class="text"></div>
+				</div><div class="counter" id="hundreds">
+					<div class="cover"></div>
+					<div class="text"></div>
+				</div><div class="counter" id="tens">
+					<div class="cover"></div>
+					<div class="text"></div>
+				</div><div class="counter last" id="units">
+					<div class="cover"></div>
+					<div class="text"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script>
+		setTimeout(function () {
+			var duration = 1000;
+			var $counter = $('#counter');
+			var from = 0;
+			var to = 3482;
+			var single = duration / (to - from);
+			var segment1 = Math.round(900 * single);
+			var segment2 = Math.round(90 * single);
+			var segment3 = Math.round(9 * single);
+			var segment4 = Math.round(single);
+
+			var raf = (window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame);
+
+			var dur1 = duration - segment1,
+				dur2 = duration - segment2,
+				dur3 = duration - segment3;
+			
+			var th = $counter.find('#thousands .text');
+			var hn = $counter.find('#hundreds .text');
+			var tn = $counter.find('#tens .text');
+			var un = $counter.find('#units .text');
+
+			var pos1 = -Math.floor((to - from) / 1000);
+			var pos2 = -Math.floor((to - from) / 100);
+			var pos3 = -Math.floor((to - from) / 10);
+			var pos4 = -Math.floor(to - from);
+
+
+			if (raf) {
+				var val = "background-position ease-in-out " + dur1 + "ms " + segment1 + "ms";
+				th.css({ transition: val });
+				val = "background-position ease-in-out " + dur2 + "ms " + segment2 + "ms";
+				hn.css({ transition: val });
+				val = "background-position ease-in-out " + dur3 + "ms " + segment3 + "ms"
+				tn.css({ transition: val });
+				val = "background-position ease-in-out " + duration + "ms";
+				un.css({ transition: val });
+
+				
+				var bg1 = { 'background-position': '0px ' + (64 * pos1) + 'px' };
+				var bg2 = { 'background-position': '0px ' + (64 * pos2) + 'px' };
+				var bg3 = { 'background-position': '0px ' + (64 * pos3) + 'px' };
+				var bg4 = { 'background-position': '0px ' + (64 * pos4) + 'px' };
+				setTimeout(function () {
+					th.css(bg1);
+					hn.css(bg2);
+					tn.css(bg3);
+					un.css(bg4);
+				}, 50);
+			}
+			else {
+				function sinusoidal(k) {
+					return 0.5 * (1 - Math.cos(Math.PI * k));
+				}
+				var fps = 30;
+				var loops = Math.ceil(duration / fps);
+				var i = 0;
+				function update(i) {
+					var prop = (i + 1) / loops;
+					var incr = sinusoidal(prop);
+					var bg1 = { 'background-position': '0px ' + incr * (64 * pos1) + 'px' };
+					var bg2 = { 'background-position': '0px ' + incr * (64 * pos2) + 'px' };
+					var bg3 = { 'background-position': '0px ' + incr * (64 * pos3) + 'px' };
+					var bg4 = { 'background-position': '0px ' + incr * (64 * pos4) + 'px' };
+					th.css(bg1);
+					hn.css(bg2);
+					tn.css(bg3);
+					un.css(bg4);
+				}
+				var id = setInterval(function () {
+					i++;
+					update(i);
+					if (i >= loops -1)
+						clearInterval(id);
+						
+				}, Math.round(1000 / 30));
+			}
+			
+		}, 500);
+
+	</script>
+</body>
+</html>
